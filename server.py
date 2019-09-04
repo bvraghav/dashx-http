@@ -8,7 +8,7 @@ from http.server import HTTPStatus
 import sys
 
 import logging as lg
-lg.basicConfig(level=lg.DEBUG, format='%(levelname)-8s: %(message)s')
+lg.basicConfig(level=lg.INFO, format='%(levelname)-8s: %(message)s')
 
 __version__ = '0.1.0'
 
@@ -31,19 +31,19 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler) :
 
   def __init__(self, *args, cors=None, **kwargs) :
     self.cors = Cors_container(cors)
-    lg.info ('Cors: %s', self.cors.cors)
+    lg.debug ('Cors: %s', self.cors.cors)
     super().__init__(*args, **kwargs)
   
   def do_GET(self):
     """Serve a GET request."""
-    lg.info(self.headers)
-    lg.info(list(self.headers.keys()))
+    lg.debug(self.headers)
+    lg.debug(list(self.headers.keys()))
     origin = self.headers['Origin']
     origin_pair = None
     if origin :
       origin = urllib.parse.urlsplit(origin)
       origin_pair = origin.hostname, origin.port
-    lg.info('Origin: %s', origin)
+    lg.debug('Origin: %s', origin)
 
     if origin_pair in self.cors :
       self.send_header(
@@ -109,7 +109,14 @@ if __name__ == '__main__':
                       help='Specify alternate port [default: 8000]')
   parser.add_argument('--cors', '-c', metavar='URI',
                       help='Allow CORS for this URI. Use `*\' for all')
+  parser.add_argument('--verbose', '-v', action="store_true",
+                      help='Verbose logging.')
   args = parser.parse_args()
+
+  # set verbosity
+  if args.verbose :
+    lg.getLogger().setLevel(lg.DEBUG)
+
   handler_class = partial(RequestHandler,
                           directory=args.directory,
                           cors=args.cors)
