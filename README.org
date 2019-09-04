@@ -1,6 +1,6 @@
 #+TITLE: README
 
-This is a python server built over `SimpleHTTPServer`, extended to
+This is a python server built over =SimpleHTTPServer=, extended to
 allow CORS.
 
 * Usage
