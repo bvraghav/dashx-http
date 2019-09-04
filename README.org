@@ -5,8 +5,8 @@ allow CORS.
 
 * Usage
 #+begin_example
-
   usage: server.py [-h] [--bind ADDRESS] [--directory DIRECTORY] [--cors URI]
+                   [--verbose]
                    [port]
 
   positional arguments:
@@ -21,4 +21,5 @@ allow CORS.
                           Specify alternative directory [default:current
                           directory]
     --cors URI, -c URI    Allow CORS for this URI. Use `*' for all
+    --verbose, -v         Verbose logging.
 #+end_example
