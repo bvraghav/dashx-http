@@ -19,11 +19,11 @@ class Cors_container(abc.Container) :
     )
 
   def __contains__(self, addr) :
-    url, port = addr
+    url, port = addr if addr else 'NoURL', 'NoPort'
     return any(
-      url == c_url and (
+      '*' == c_url or (url == c_url and (
         (not c_port) or port in c_port
-      ) for c_url, *c_port in self.cors
+      )) for c_url, *c_port in self.cors
     )
 
 class RequestHandler(http.server.SimpleHTTPRequestHandler) :
@@ -31,6 +31,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler) :
 
   def __init__(self, *args, cors=None, **kwargs) :
     self.cors = Cors_container(cors)
+    lg.info ('Cors: %s', self.cors.cors)
     super().__init__(*args, **kwargs)
   
   def do_GET(self):
@@ -38,16 +39,20 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler) :
     lg.info(self.headers)
     lg.info(list(self.headers.keys()))
     origin = self.headers['Origin']
+    origin_pair = None
     if origin :
       origin = urllib.parse.urlsplit(origin)
       origin_pair = origin.hostname, origin.port
-    lg.info(origin)
+    lg.info('Origin: %s', origin)
 
-    if origin and origin_pair in self.cors :
+    if origin_pair in self.cors :
       self.send_header(
         'Access-Control-Allow-Origin',
-        urllib.parse.urlunsplit(origin)
+        (urllib.parse.urlunsplit(origin) if origin else '*')
       )
+    else :
+      lg.debug('Origin Pair: %s not in Cors', origin_pair)
+
     super().do_GET()
 
   def send_response_only(self, code, message=None):
