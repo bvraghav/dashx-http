@@ -1,0 +1,24 @@
+#+TITLE: README
+
+This is a python server built over `SimpleHTTPServer`, extended to
+allow CORS.
+
+* Usage
+#+begin_example
+
+  usage: server.py [-h] [--bind ADDRESS] [--directory DIRECTORY] [--cors URI]
+                   [port]
+
+  positional arguments:
+    port                  Specify alternate port [default: 8000]
+
+  optional arguments:
+    -h, --help            show this help message and exit
+    --bind ADDRESS, -b ADDRESS
+                          Specify alternate bind address [default: all
+                          interfaces]
+    --directory DIRECTORY, -d DIRECTORY
+                          Specify alternative directory [default:current
+                          directory]
+    --cors URI, -c URI    Allow CORS for this URI. Use `*' for all
+#+end_example
