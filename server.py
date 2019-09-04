@@ -19,7 +19,7 @@ class Cors_container(abc.Container) :
     )
 
   def __contains__(self, addr) :
-    url, port = addr if addr else 'NoURL', 'NoPort'
+    url, port = addr if addr else ('NoURL', 'NoPort')
     return any(
       '*' == c_url or (url == c_url and (
         (not c_port) or port in c_port
