@@ -14,8 +14,12 @@ __version__ = '0.1.0'
 
 class Cors_container(abc.Container) :
   def __init__(self, cors) :
-    self.cors = tuple(
-      tuple(addr.split(':')) for addr in cors.split(',')
+    self.cors = (
+      cors if cors is None
+      else (
+          tuple(addr.split(':'))
+          for addr in cors.split(',')
+      )
     )
 
   def __contains__(self, addr) :
@@ -108,7 +112,10 @@ if __name__ == '__main__':
                       nargs='?',
                       help='Specify alternate port [default: 8000]')
   parser.add_argument('--cors', '-c', metavar='URI',
-                      help='Allow CORS for this URI. Use `*\' for all')
+                      default='*',
+                      help='Allow CORS for this URI.'
+                      ' Use `*\' for all.'
+                      ' [default=*]')
   parser.add_argument('--verbose', '-v', action="store_true",
                       help='Verbose logging.')
   args = parser.parse_args()
@@ -116,6 +123,8 @@ if __name__ == '__main__':
   # set verbosity
   if args.verbose :
     lg.getLogger().setLevel(lg.DEBUG)
+
+  lg.debug('Args: %s', args)
 
   handler_class = partial(RequestHandler,
                           directory=args.directory,
